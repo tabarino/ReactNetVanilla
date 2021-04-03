@@ -3,9 +3,9 @@ import styles from './CommentList.module.css';
 import Comment from '../Comment/Comment';
 
 const CommentList = (props) => {
-  const commentNodes = props.data.map(comment => (
-    <Comment author={comment.author} key={comment.id}>
-      {comment.text}
+  const commentNodes = props.comments.map(comment => (
+    <Comment author={comment.Author} key={comment.Id}>
+      {comment.Text}
     </Comment>
   ));
 

@@ -3,19 +3,35 @@ import CommentForm from '../../components/CommentForm/CommentForm';
 import CommentList from '../../components/CommentList/CommentList';
 
 export class CommentBox extends Component {
+  state = {
+    comments: [],
+    loading: true
+  };
+
   render() {
-    const data = [
-      { id: 1, author: 'Daniel Lo Nigro', text: 'Hello ReactJS.NET World!' },
-      { id: 2, author: 'Pete Hunt', text: 'This is one comment' },
-      { id: 3, author: 'Jordan Walke', text: 'This is another comment' },
-    ];
+    let contents = this.state.loading
+      ? <p><em>Loading...</em></p>
+      : this.renderComments(this.state.comments);
 
     return (
       <div>
         <h1>Comments</h1>
-        <CommentList data={data} />
-        <CommentForm />
+        {contents}
       </div>
     );
+  }
+
+  renderComments = (comments) => {
+    return <CommentList comments={comments} />;
+  }
+
+  componentDidMount() {
+    this.populateCommentsData();
+  }
+
+  async populateCommentsData() {
+    const response = await fetch('api/comments');
+    const data = await response.json();
+    this.setState({ comments: data, loading: false });
   }
 }
