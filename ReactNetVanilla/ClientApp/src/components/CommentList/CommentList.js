@@ -4,8 +4,8 @@ import Comment from '../Comment/Comment';
 
 const CommentList = (props) => {
   const commentNodes = props.comments.map(comment => (
-    <Comment author={comment.Author} key={comment.Id}>
-      {comment.Text}
+    <Comment author={comment.author} key={comment.id}>
+      {comment.text}
     </Comment>
   ));
 

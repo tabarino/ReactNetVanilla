@@ -1,44 +1,40 @@
 using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using ReactNetVanilla.Controllers.Resources;
+using ReactNetVanilla.Core;
+using ReactNetVanilla.Core.Models;
 
-namespace ReactDemo.Controllers
+namespace ReactNetVanilla.Controllers
 {
     public class CommentController : ControllerBase
     {
-        private static readonly IList<CommentResource> _comments;
+        private readonly IMapper _mapper;
+        private readonly ICommentRepository _repository;
+        private readonly IUnitOfWork _unitOfWork;
 
-        static CommentController()
+        public CommentController(IMapper mapper, ICommentRepository repository, IUnitOfWork unitOfWork)
         {
-            _comments = new List<CommentResource>
-            {
-                new CommentResource
-                {
-                    Id = 1,
-                    Author = "Daniel Lo Nigro",
-                    Text = "Hello ReactJS.NET World!"
-                },
-                new CommentResource
-                {
-                    Id = 2,
-                    Author = "Pete Hunt",
-                    Text = "This is one comment"
-                },
-                new CommentResource
-                {
-                    Id = 3,
-                    Author = "Jordan Walke",
-                    Text = "This is another comment"
-                },
-            };
+            _mapper = mapper;
+            _repository = repository;
+            _unitOfWork = unitOfWork;
         }
 
         [HttpGet("/api/comments")]
-        public IActionResult GetComments()
+        public async Task<IActionResult> GetComments()
         {
-            var comments = JsonConvert.SerializeObject(_comments);
+            var comments = await _repository.GetComments();
+
+            if (comments == null)
+            {
+                return NotFound();
+            }
+
+            var commentsResource = _mapper.Map<IList<Comment>, IList<CommentResource>>(comments);
+
             return Ok(comments);
         }
     }
